@@ -9,9 +9,17 @@ import { join } from "node:path";
 const LINE =
   "My AI agent asked for a raise, so I gave it a bigger context window and called it a promotion.";
 
-// Guard the gate: entry.txt must be 1-140 chars of UTF-8 text, single line.
-if (LINE.length < 1 || LINE.length > 140 || LINE.includes("\n")) {
-  throw new Error(`LINE must be 1-140 chars, single line (got ${LINE.length})`);
+// Guard the gate: entry.txt must be 1-140 chars of UTF-8 text, single line,
+// with no leading/trailing whitespace and more than one word (a real line,
+// not a bare word or a pasted fragment).
+if (
+  LINE.length < 1 ||
+  LINE.length > 140 ||
+  LINE.includes("\n") ||
+  LINE !== LINE.trim() ||
+  LINE.split(/\s+/).length < 2
+) {
+  throw new Error(`LINE must be 1-140 chars, single line, trimmed, multi-word (got ${LINE.length})`);
 }
 
 const outputDir = process.env.OUTPUT_DIR ?? "/output";
